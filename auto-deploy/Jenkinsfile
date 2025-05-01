@@ -30,7 +30,8 @@ pipeline {
             steps {
                 echo "Installing Firebase CLI..."
                 dir('auto-deploy') {
-                    sh 'npm install -g firebase-tools' // ติดตั้ง Firebase CLI
+                    // ติดตั้ง Firebase CLI ในโฟลเดอร์ของโปรเจ็กต์
+                    sh 'npm install firebase-tools'
                 }
             }
         }
@@ -39,6 +40,7 @@ pipeline {
             steps {
                 echo "Deploying to Firebase Hosting..."
                 dir('auto-deploy') {
+                    // ทำการ deploy ไปยัง Firebase Hosting
                     sh "firebase deploy --only hosting:auto-deploy01"
                 }
             }
