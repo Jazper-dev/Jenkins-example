@@ -28,8 +28,11 @@ pipeline {
 
         stage('Install Firebase CLI') {
             steps {
-                echo "Installing Firebase CLI globally..."
-                sh 'npm install -g firebase-tools'
+                echo "Installing Firebase CLI..."
+                dir('auto-deploy') {
+                    // ติดตั้ง Firebase CLI ในโฟลเดอร์ของโปรเจ็กต์
+                    sh 'npm install firebase-tools'
+                }
             }
         }
 
@@ -37,8 +40,7 @@ pipeline {
             steps {
                 echo "Deploying to Firebase Hosting..."
                 dir('auto-deploy') {
-                    // เพิ่มการตั้งค่า PATH หากจำเป็น
-                    sh 'export PATH=$PATH:/usr/local/bin'
+                    // ทำการ deploy ไปยัง Firebase Hosting
                     sh "firebase deploy --only hosting:auto-deploy01"
                 }
             }
