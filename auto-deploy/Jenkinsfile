@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        // Replace this with your actual Firebase project name
         FIREBASE_PROJECT = 'auto-deploy01'
     }
 
@@ -26,7 +27,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                // Add test commands if applicable, e.g., `npm test`
+                // Add your test commands here if needed
             }
         }
 
@@ -42,19 +43,21 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying to Firebase Hosting...'
-                dir('auto-deploy') {
-                    sh 'npx firebase deploy --only hosting:$FIREBASE_PROJECT'
+                withCredentials([string(credentialsId: 'FIREBASE_TOKEN', variable: 'FIREBASE_TOKEN')]) {
+                    dir('auto-deploy') {
+                        sh 'npx firebase deploy --only hosting:$FIREBASE_PROJECT --token "$FIREBASE_TOKEN"'
+                    }
                 }
             }
         }
     }
 
     post {
-        success {
-            echo 'Deployment succeeded.'
-        }
         failure {
             echo 'Deployment failed...'
+        }
+        success {
+            echo 'Deployment succeeded!'
         }
     }
 }
