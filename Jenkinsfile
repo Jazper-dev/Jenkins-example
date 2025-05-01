@@ -1,26 +1,47 @@
 pipeline {
     agent any
     stages {
+        // Clone repo จาก Git
         stage('Clone') {
             steps {
                 echo "Cloning repo..."
                 checkout scm
             }
         }
+
+        // ติดตั้ง dependencies และ build โปรเจกต์
         stage('Build') {
             steps {
-                echo "Building project..."
+                echo "Installing dependencies and building the project..."
+                sh 'npm install' // ติดตั้ง dependencies
+                sh 'npm run build' // สร้างไฟล์โปรเจกต์
             }
         }
+
+        // (Optional) รัน Test ถ้าต้องการ
         stage('Test') {
             steps {
                 echo "Running tests..."
+                // ใส่คำสั่งรันเทสต์ของคุณที่นี่ ถ้ามี
+                // เช่น sh 'npm test'
             }
         }
+
+        // Deploy โปรเจกต์ไป Firebase Hosting
         stage('Deploy') {
             steps {
-                echo "Deploying..."
+                echo "Deploying to Firebase Hosting..."
+                sh "firebase deploy --only hosting:auto-deploy01"
             }
+        }
+    }
+
+    post {
+        success {
+            echo "Deployment successful!"
+        }
+        failure {
+            echo "Deployment failed."
         }
     }
 }
