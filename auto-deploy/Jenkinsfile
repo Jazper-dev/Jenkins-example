@@ -13,8 +13,10 @@ pipeline {
         stage('Build') {
             steps {
                 echo "Installing dependencies and building the project..."
-                sh 'npm install' // ติดตั้ง dependencies
-                sh 'npm run build' // สร้างไฟล์โปรเจกต์
+                sh "pwd"
+                sh "ls -la"
+                sh "npm install"       // ติดตั้ง dependencies
+                sh "npm run build"     // สร้างไฟล์โปรเจกต์
             }
         }
 
@@ -22,8 +24,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo "Running tests..."
-                // ใส่คำสั่งรันเทสต์ของคุณที่นี่ ถ้ามี
-                // เช่น sh 'npm test'
+                // เช่น sh "npm test"
             }
         }
 
