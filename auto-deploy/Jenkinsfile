@@ -1,18 +1,22 @@
 pipeline {
     agent any
+
+    environment {
+        FIREBASE_PROJECT = 'auto-deploy01'
+    }
+
     stages {
         stage('Clone') {
             steps {
-                echo "Cloning repo..."
+                echo 'Cloning repo...'
                 checkout scm
             }
         }
 
         stage('Build') {
             steps {
-                echo "Installing dependencies and building the project..."
+                echo 'Installing dependencies and building the project...'
                 dir('auto-deploy') {
-                    sh 'ls -la'
                     sh 'npm install'
                     sh 'npm run build'
                 }
@@ -21,25 +25,25 @@ pipeline {
 
         stage('Test') {
             steps {
-                echo "Running tests..."
-                // Optional: เพิ่มการทดสอบในอนาคต
+                echo 'Running tests...'
+                // Add test commands if applicable, e.g., `npm test`
             }
         }
 
         stage('Install Firebase CLI') {
             steps {
-                echo "Installing Firebase CLI globally..."
-                sh 'npm install -g firebase-tools'
+                echo 'Installing Firebase CLI locally...'
+                dir('auto-deploy') {
+                    sh 'npm install firebase-tools'
+                }
             }
         }
 
         stage('Deploy') {
             steps {
-                echo "Deploying to Firebase Hosting..."
+                echo 'Deploying to Firebase Hosting...'
                 dir('auto-deploy') {
-                    // เพิ่มการตั้งค่า PATH หากจำเป็น
-                    sh 'export PATH=$PATH:/usr/local/bin'
-                    sh "firebase deploy --only hosting:auto-deploy01"
+                    sh 'npx firebase deploy --only hosting:$FIREBASE_PROJECT'
                 }
             }
         }
@@ -47,10 +51,10 @@ pipeline {
 
     post {
         success {
-            echo "Deployment successful!"
+            echo 'Deployment succeeded.'
         }
         failure {
-            echo "Deployment failed."
+            echo 'Deployment failed.'
         }
     }
 }
