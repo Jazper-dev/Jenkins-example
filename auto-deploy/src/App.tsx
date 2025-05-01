@@ -11,7 +11,7 @@ function App() {
 
       </div>
       <h1>Auto Dploy</h1>
-      <a href="">#test 1</a>
+      <a href="">#test 2</a>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
