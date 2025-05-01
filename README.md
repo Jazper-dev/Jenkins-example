@@ -28,7 +28,7 @@ docker compose up --build
 - ใช้คำสั่งดึงรหัสแรกเข้า:
 
 ```bash
-docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+docker exec jenkins cat /var/jenkins-nodejs/secrets/initialAdminPassword
 ```
 
 - ใส่รหัสในหน้า Jenkins → ติดตั้ง Plugin และสร้างผู้ใช้งาน
