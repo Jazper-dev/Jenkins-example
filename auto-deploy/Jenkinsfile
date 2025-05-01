@@ -1,75 +1,10 @@
-// pipeline {
-//     agent any
-
-//     environment {
-//         // Replace this with your actual Firebase project name
-//         FIREBASE_PROJECT = 'auto-deploy01'
-//     }
-
-//     stages {
-//         stage('Clone') {
-//             steps {
-//                 echo 'Cloning repo...'
-//                 checkout scm
-//             }
-//         }
-
-//         stage('Build') {
-//             steps {
-//                 echo 'Installing dependencies and building the project...'
-//                 dir('auto-deploy') {
-//                     sh 'npm install'
-//                     sh 'npm run build'
-//                 }
-//             }
-//         }
-
-//         stage('Test') {
-//             steps {
-//                 echo 'Running tests...'
-//                 // Add your test commands here if needed
-//             }
-//         }
-
-//         stage('Install Firebase CLI') {
-//             steps {
-//                 echo 'Installing Firebase CLI locally...'
-//                 dir('auto-deploy') {
-//                     sh 'npm install firebase-tools'
-//                 }
-//             }
-//         }
-
-//         stage('Deploy') {
-//             steps {
-//                 echo 'Deploying to Firebase Hosting...'
-//                 withCredentials([string(credentialsId: 'FIREBASE_TOKEN', variable: 'FIREBASE_TOKEN')]) {
-//                     dir('auto-deploy') {
-//                         sh 'npx firebase deploy --only hosting:$FIREBASE_PROJECT --token "$FIREBASE_TOKEN"'
-//                     }
-//                 }
-//             }
-//         }
-//     }
-
-//     post {
-//         failure {
-//             echo 'Deployment failed...'
-//         }
-//         success {
-//             echo 'Deployment succeeded!'
-//         }
-//     }
-// }
-
 pipeline {
     agent any
-    
+
     environment {
-        // Define Firebase token as a credential in Jenkins
-        FIREBASE_CREDENTIALS = credentials('firebase-token')
+        FIREBASE_PROJECT = 'auto-deploy01'
     }
-    
+
     stages {
         stage('Clone') {
             steps {
@@ -77,7 +12,7 @@ pipeline {
                 checkout scm
             }
         }
-        
+
         stage('Build') {
             steps {
                 echo 'Installing dependencies and building the project...'
@@ -87,14 +22,14 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                // Add your test commands here if needed
+                // Add test commands if applicable, e.g., `npm test`
             }
         }
-        
+
         stage('Install Firebase CLI') {
             steps {
                 echo 'Installing Firebase CLI locally...'
@@ -103,31 +38,23 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Deploy') {
             steps {
                 echo 'Deploying to Firebase Hosting...'
                 dir('auto-deploy') {
-                    // Using service account approach instead of token (recommended by Firebase)
-                    withCredentials([file(credentialsId: 'firebase-service-account', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
-                        sh 'npx firebase deploy --only hosting:auto-deploy01'
-                    }
-                    
-                    // Alternative approach using token if service account isn't set up
-                    // withCredentials([string(credentialsId: 'firebase-token', variable: 'FIREBASE_TOKEN')]) {
-                    //     sh 'npx firebase deploy --only hosting:auto-deploy01 --token $FIREBASE_TOKEN'
-                    // }
+                    sh 'npx firebase deploy --only hosting:$FIREBASE_PROJECT  --token ${FIREBASE_TOKEN}'
                 }
             }
         }
     }
-    
+
     post {
         success {
-            echo 'Deployment successful!'
+            echo 'Deployment succeeded.'
         }
         failure {
-            echo 'Deployment failed...'
+            echo 'Deployment failed.'
         }
     }
 }
